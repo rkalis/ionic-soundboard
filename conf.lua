@@ -1,4 +1,7 @@
 function love.conf(t)
+    SCREEN_WIDTH = 640
+    SCREEN_HEIGHT = 1136
+
     t.identity = nil                    -- The name of the save directory (string)
     t.version = "0.10.1"                -- The LÖVE version this game was made for (string)
     t.console = false                   -- Attach a console (boolean, Windows only)
@@ -6,10 +9,10 @@ function love.conf(t)
     t.externalstorage = false           -- True to save files (and read from the save directory) in external storage on Android (boolean)
     t.gammacorrect = false              -- Enable gamma-correct rendering, when supported by the system (boolean)
 
-    t.window.title = "SoundBoard"         -- The window title (string)
+    t.window.title = "SoundBoard"       -- The window title (string)
     t.window.icon = nil                 -- Filepath to an image to use as the window's icon (string)
-    t.window.width = 800                -- The window width (number)
-    t.window.height = 600               -- The window height (number)
+    t.window.width = SCREEN_WIDTH       -- The window width (number)
+    t.window.height = SCREEN_HEIGHT     -- The window height (number)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.resizable = false          -- Let the window be user-resizable (boolean)
     t.window.minwidth = 1               -- Minimum window width if the window is resizable (number)
