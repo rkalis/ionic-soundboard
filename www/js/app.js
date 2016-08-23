@@ -14,13 +14,17 @@ app.run(function ($ionicPlatform) {
 });
 
 app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
-	$scope.source_url = "http://kalis.me";
+	/* EDIT THESE */
+	$scope.base_url = "http://kalis.me";
+	$scope.sounds_folder = "/sounds";
+	$scope.title = "Soundboard"
+
 
 	$scope.model = {
 		sounds: []
 	};
 
-	$http.get($scope.source_url + '/sounds').then(function(response) {
+	$http.get($scope.base_url + $scope.sounds_folder).then(function(response) {
 		var raw_html = response.data;
 		var doc = document.createElement("html");
 		doc.innerHTML = raw_html;
@@ -29,7 +33,7 @@ app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 		for (var i = 0; i < links.length; i++) {
 		    $scope.model.sounds.push({
 		        title: links[i].innerHTML,
-		        file: $scope.source_url + links[i].getAttribute("href")
+		        file: $scope.base_url + links[i].getAttribute("href")
 		    });
 		}
 	});
