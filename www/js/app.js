@@ -16,7 +16,7 @@ app.run(function ($ionicPlatform) {
 app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 	/* EDIT THESE */
 	$scope.base_url = "http://kalis.me";
-	$scope.sounds_folder = "/sounds";
+	$scope.sounds_url = "/sounds";
 	$scope.title = "Soundboard"
 
 
@@ -24,7 +24,7 @@ app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 		sounds: []
 	};
 
-	$http.get($scope.base_url + $scope.sounds_folder).then(function(response) {
+	$http.get($scope.base_url + $scope.sounds_url).then(function(response) {
 		var raw_html = response.data;
 		var doc = document.createElement("html");
 		doc.innerHTML = raw_html;
