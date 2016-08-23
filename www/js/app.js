@@ -1,19 +1,19 @@
 var app = angular.module('soundboard', ['ionic']);
 
-app.run(function ($ionicPlatform) {
-	$ionicPlatform.ready(function () {
+app.run(function($ionicPlatform) {
+	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
-		if (window.cordova && window.cordova.plugins.Keyboard) {
+		if(window.cordova && window.cordova.plugins.Keyboard) {
 			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 		}
-		if (window.StatusBar) {
+		if(window.StatusBar) {
 			StatusBar.styleDefault();
 		}
 	});
 });
 
-app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
+app.controller('SoundBoardCtrl', function($scope, $http, $window) {
 	/* EDIT THESE */
 	$scope.base_url = "http://kalis.me";
 	$scope.sounds_url = "/sounds";
@@ -30,7 +30,7 @@ app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 		doc.innerHTML = raw_html;
 		var links = doc.getElementsByTagName("a");
 
-		for (var i = 0; i < links.length; i++) {
+		for(var i = 0; i < links.length; i++) {
 		    $scope.model.sounds.push({
 		        title: links[i].innerHTML,
 		        file: $scope.base_url + links[i].getAttribute("href")
@@ -40,21 +40,21 @@ app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 
 	$scope.media = null;
 
-	$scope.play = function (sound) {
+	$scope.play = function(sound) {
 
-		if ($scope.media) {
+		if($scope.media) {
 			$scope.media.pause();
 		}
 
-		if ($window.cordova) {
+		if($window.cordova) {
 			console.log("Play called on device");
 			ionic.Platform.ready(function () {
-
 				var src = sound.file;
 				$scope.media = new $window.Media(src);
 				$scope.media.play();
 			});
-		} else {
+		}
+		else {
 			$scope.media = new Audio();
 			$scope.media.src = sound.file;
 			$scope.media.load();
@@ -62,4 +62,3 @@ app.controller('SoundBoardCtrl', function ($scope, $http, $window) {
 		}
 	};
 });
-
