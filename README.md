@@ -19,13 +19,26 @@ Assumes that Git is installed along with the prerequisites.
 git clone git@github.com:rkalis/ionic-soundboard.git
 cd ionic-soundboard
 ionic plugin add cordova-plugin-media
+ionic platform add ios
+ionic platform add android
 ```
 
 ## Customising
+### Text
 Open `ionic-soundboard/www/js/app.js` and edit the following variables:
 * $scope.base_url
 * $scope.sounds_url
 * $scope.title
+
+### Colours
+To-Do
+
+### Icon & Splash Screen
+Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splashscreen.png` with your own files.
+Then run:
+```
+ionic resources
+```
 
 ## Usage
 
