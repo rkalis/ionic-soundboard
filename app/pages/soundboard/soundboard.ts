@@ -6,7 +6,7 @@ import {Http} from '@angular/http';
   templateUrl: 'build/pages/soundboard/soundboard.html'
 })
 export class SoundboardPage {
-  title: string = "Soundboard";
+  title: string = "Soundboard2";
   base_url: string = "http://kalis.me";
   sounds_url: string = "/sounds";
 
@@ -18,8 +18,9 @@ export class SoundboardPage {
     "cyan"
     ];
   sounds: any = [];
+  media: any = null;
   constructor(public http: Http) {
-    http.get(this.base_url + this.sounds_url)
+    this.http.get(this.base_url + this.sounds_url)
       .subscribe(
         data => {
           let content: string = data.text();
@@ -38,11 +39,23 @@ export class SoundboardPage {
        );
 
   }
+
   colourStyle(mode) {
     if(mode == "random") {
       let colour: string = this.colours[Math.floor(Math.random()*this.colours.length)];
       return {color: colour}
     }
     return {color: 'black'};
+  }
+
+  play(sound) {
+    console.log(sound)
+    if(this.media) {
+      this.media.pause();
+    }
+    this.media = new Audio();
+    this.media.src = sound.file;
+    this.media.load();
+    this.media.play();
   }
 }
