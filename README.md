@@ -33,10 +33,10 @@ Open `ionic-soundboard/app/pages/soundboard/soundboard.ts` and edit the followin
 
 ### Colours
 If you set randomColours to `true`, you can edit the colours array to change the possible random colours.  
-If you set randomColours to `false`, you can edit the colour variable to the desired icon colour.
+If you set randomColours to `false`, you can edit the colour variable to the desired icon colour.  
 The colour of the title-bar can be edited in `ionic-soundboard/app/theme/app.variables.scss` by editing the primary color.
 
-### Icon & Splash Screen
+### Icon & Splash Screen (Note: this Ionic feature is in Beta)
 Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splashscreen.png` with your own files.
 Then run:
 ```
@@ -62,6 +62,9 @@ For example http://kalis.me/sounds looks like this:
 ```
 Resulting in this soundboard:
 ![Soundboard](https://i.imgur.com/4Bweeni.png)
+
+Or with edited title-bar colour and random icon colours:
+![Soundboard2](https://i.imgur.com/KL87vK5.png)
 
 ## Testing/Building/Publishing
 Please refer to the [ContactApp Wiki](https://github.com/incodehq/contactapp/wiki)
