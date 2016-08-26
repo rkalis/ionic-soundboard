@@ -6,17 +6,24 @@ import {Http} from '@angular/http';
   templateUrl: 'build/pages/soundboard/soundboard.html'
 })
 export class SoundboardPage {
-  title: string = "Soundboard2";
+
+  /* EDIT THESE */
+  title: string = "Soundboard";
   base_url: string = "http://kalis.me";
   sounds_url: string = "/sounds";
+  randomColours: boolean = false;
 
+  /* Icon Colours */
+  /* EDIT THESE */
   colours: Array<string> = [
     "red",
     "blue",
     "green",
     "purple",
     "cyan"
-    ];
+  ];
+  colour: string = "black";
+
   sounds: any = [];
   media: any = null;
   constructor(public http: Http) {
@@ -27,25 +34,25 @@ export class SoundboardPage {
           let doc: any = document.createElement("html");
           doc.innerHTML = content;
           let links: any = doc.getElementsByTagName("a");
-          for(var i = 0; i < links.length; i++) {
-              this.sounds.push({
-                  title: links[i].innerHTML,
-                  file: this.base_url + links[i].getAttribute("href")
-              });
+          for(let link of links) {
+            this.sounds.push({
+              title: link.innerHTML,
+              file: this.base_url + link.getAttribute("href")
+            });
           }
         },
         err => console.error('There was an error: ' + err),
         () => console.log('Get request completed')
        );
-
   }
 
-  colourStyle(mode) {
-    if(mode == "random") {
-      let colour: string = this.colours[Math.floor(Math.random()*this.colours.length)];
-      return {color: colour}
+  colourStyle() {
+    if(this.randomColours) {
+      let colour: string = this.colours[Math.floor(
+                                        Math.random() * this.colours.length)];
+      return {color: colour};
     }
-    return {color: 'black'};
+    return {color: this.colour};
   }
 
   play(sound) {
