@@ -19,6 +19,7 @@ Assumes that Git is installed along with the prerequisites.
 ```
 git clone git@github.com:rkalis/ionic-soundboard.git
 cd ionic-soundboard
+npm install
 ionic platform add ios
 ionic platform add android
 ```
