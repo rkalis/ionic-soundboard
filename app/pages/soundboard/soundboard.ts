@@ -41,9 +41,16 @@ export class SoundboardPage {
 
           /* Loop through them, saving their title and sound file */
           for(let link of links) {
+            let filename = link.getAttribute("href")
+            if(filename.startsWith("/")) {
+              filename = this.base_url + filename
+            }
+            else {
+              filename = this.base_url + this.sounds_url + "/" + filename
+            }
             this.sounds.push({
               title: link.innerHTML,
-              file: this.base_url + link.getAttribute("href")
+              file: filename
             });
           }
         },
