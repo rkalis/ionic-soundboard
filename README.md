@@ -23,6 +23,10 @@ npm install
 ionic platform add ios
 ionic platform add android
 ```
+Then run it locally with
+```
+ionic serve --lab
+```
 
 ## Customising
 ### Text
