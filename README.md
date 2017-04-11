@@ -1,21 +1,21 @@
 # Ionic 2 Soundboard
 
-This app takes a collection of sounds from a custom URL. 
-That way sounds can be added and removed at will, 
-while still keeping the app code the same. 
+This app takes a collection of sounds from a custom URL.
+That way sounds can be added and removed at will,
+while still keeping the app code the same.
 The app makes use of [Ionic 2](http://ionic.io/2) with [TypeScript](https://www.typescriptlang.org/).
 
 ## Prerequisities
-Assumes that Homebrew is installed. 
+Assumes that Homebrew is installed.
 For alternative installation options for Node, refer to their [website](https://nodejs.org/)
 ```
 brew install node
 npm install -g cordova
-npm install -g ionic@beta
+npm install -g ionic
 ```
 
 ## Setup
-Assumes that Git is installed along with the prerequisites. 
+Assumes that Git is installed along with the prerequisites.
 ```
 git clone git@github.com:rkalis/ionic-soundboard.git
 cd ionic-soundboard
@@ -30,19 +30,19 @@ ionic serve --lab
 
 ## Customising
 ### Text
-Open `ionic-soundboard/app/pages/soundboard/soundboard.ts` and edit the following variables:
+Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` and edit the following variables:
 * base_url -> The website which hosts your sound files
 * sounds_url -> The location where your sounds are on your website
 * title -> The title shown in the top bar of the app
 * randomColours -> Whether the icons are random colours or all the same
 
 ### Colours
-If you set randomColours to `true`, you can edit the colours array to change the possible random colours.  
-If you set randomColours to `false`, you can edit the colour variable to the desired icon colour.  
-The colour of the title-bar can be edited in `ionic-soundboard/app/theme/app.variables.scss` by editing the primary color.
+If you set randomColours to `true`, you can edit the colours array to change the possible random colours.
+If you set randomColours to `false`, you can edit the colour variable to the desired icon colour.
+The colour of the title-bar can be edited in `ionic-soundboard/src/theme/variables.scss` by editing the primary color.
 
 ### Icon & Splash Screen (Note: this Ionic feature is in Beta)
-Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splashscreen.png` with your own files.
+Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splash.png` with your own files.
 Then run:
 ```
 ionic resources

@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
-import {Http} from '@angular/http';
+import { Component } from '@angular/core';
+import { Http } from '@angular/http';
 
 
 @Component({
-  templateUrl: 'build/pages/soundboard/soundboard.html'
+  templateUrl: 'soundboard.html'
 })
 export class SoundboardPage {
 
