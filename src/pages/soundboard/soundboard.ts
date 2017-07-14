@@ -12,18 +12,6 @@ export class SoundboardPage {
   title: string = "Soundboard";
   base_url: string = "http://kalis.me";
   sounds_url: string = "/sounds";
-  randomColours: boolean = false;
-
-  /* Icon Colours */
-  /* EDIT THESE */
-  colour: string = "black";
-  colours: Array<string> = [
-    "red",
-    "blue",
-    "green",
-    "purple",
-    "cyan"
-  ];
 
   sounds: any = [];
   media: any = null;
@@ -59,17 +47,6 @@ export class SoundboardPage {
         err => console.error('There was an error: ' + err),
         () => console.log('Get request completed')
        );
-  }
-
-  /* returns an ngStyle-compliant object containing either a random colour
-   * or a specific colour, depending on set variables
-   */
-  colourStyle() {
-    if(this.randomColours) {
-      let colour: string = this.colours[Math.floor(Math.random() * this.colours.length)];
-      return {color: colour};
-    }
-    return {color: this.colour};
   }
 
   /* Plays a sound, pausing other playing sounds if necessary */
