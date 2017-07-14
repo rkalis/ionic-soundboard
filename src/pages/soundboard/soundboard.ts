@@ -9,7 +9,7 @@ import { FavouritesData } from '../../providers/favouritesdata';
 export class SoundboardPage {
 
   /* EDIT THESE */
-  title: string = "Soundboard";
+  title: string = "Ionic Soundboard";
   base_url: string = "http://kalis.me";
   sounds_url: string = "/sounds";
 
