@@ -1,13 +1,14 @@
 <ion-header>
-  <ion-navbar primary>
+  <ion-navbar>
     <ion-title>{{ title }}</ion-title>
+    <!-- <button ion-button (click)="favouritesData.clearStorage()">Clear</button> -->
   </ion-navbar>
 </ion-header>
 
 <ion-content>
 
 <ion-list>
-   <button ion-item detail-none *ngFor="let sound of sounds">
+  <ion-item detail-none *ngFor="let sound of listSortedSounds()">
     <h2>{{ sound.title }}</h2>
 
     <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="play(sound)"></ion-icon>
@@ -15,7 +16,7 @@
 
     <ion-icon *ngIf="!favouritesData.hasFavourite(sound)" name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
     <ion-icon *ngIf="favouritesData.hasFavourite(sound)" name="star" item-end (click)="toggleFavourite(sound)"></ion-icon>
-  </button>
+  </ion-item>
 </ion-list>
 
 </ion-content>

@@ -20,9 +20,14 @@ export class FavouritesData {
     });
   }
 
+  clearStorage() {
+    this.storage.clear();
+    this._favourites = [];
+  }
+
   /* Checks if sound with name already exists in favourites */
   hasFavourite(sound: any): boolean {
-    return this.findWithAttr(this._favourites, "title", sound.title) == -1;
+    return this.findWithAttr(this._favourites, "title", sound.title) != -1;
   };
 
   /* Adds new sound to favourites and storage */

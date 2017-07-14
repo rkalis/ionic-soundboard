@@ -70,18 +70,36 @@ export class SoundboardPage {
 
     this.media.load();
     this.media.play();
-    console.log(this.media);
   }
 
+  /* Stops the playback of the sound */
   stop(sound) {
     if(sound.isPlaying) {
       this.media.pause();
     }
   }
 
+  /* Toggle a sound as favourite */
   toggleFavourite(sound) {
     this.favouritesData.toggleFavourite(sound);
     console.log(this.favouritesData.getAllFavourites());
+  }
+
+  /* Lists all favourited sounds */
+  listFavouriteSounds() {
+    let allFavourites = this.favouritesData.getAllFavourites();
+    return allFavourites;
+  }
+
+  /* Lists all sounds not marked as favourite */
+  listRegularSounds() {
+    let regularSounds = this.sounds.filter(sound => !this.favouritesData.hasFavourite(sound));
+    return regularSounds;
+  }
+
+  /* List all sounds, favourites first */
+  listSortedSounds() {
+    return this.listFavouriteSounds().concat(this.listRegularSounds());
   }
 
 }
