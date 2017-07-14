@@ -1,9 +1,9 @@
-# Ionic 2 Soundboard
+# Ionic 3 Soundboard
 
 This app takes a collection of sounds from a custom URL.
 That way sounds can be added and removed at will,
 while still keeping the app code the same.
-The app makes use of [Ionic 2](http://ionic.io/2) with [TypeScript](https://www.typescriptlang.org/).
+The app makes use of [Ionic 3](https://ionicframework.com/) with [TypeScript](https://www.typescriptlang.org/).
 
 ## Prerequisities
 Assumes that Homebrew is installed.
@@ -28,24 +28,24 @@ Then run it locally with
 ionic serve --lab
 ```
 
+## Features
+The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips.
+
+<img src="https://i.imgur.com/cZjbwtG.png" width="240">
+
 ## Customising
 ### Text
 Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` and edit the following variables:
 * base_url -> The website which hosts your sound files
 * sounds_url -> The location where your sounds are on your website
 * title -> The title shown in the top bar of the app
-* randomColours -> Whether the icons are random colours or all the same
-
-### Colours
-If you set randomColours to `true`, you can edit the colours array to change the possible random colours.
-If you set randomColours to `false`, you can edit the colour variable to the desired icon colour.
-The colour of the title-bar can be edited in `ionic-soundboard/src/theme/variables.scss` by editing the primary color.
 
 ### Icon & Splash Screen (Note: this Ionic feature is in Beta)
 Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splash.png` with your own files.
 Then run:
 ```
-ionic resources
+ionic cordova resources ios
+ionic cordova resources android
 ```
 
 ## Usage
@@ -66,10 +66,7 @@ For example http://kalis.me/sounds looks like this:
 <a href="/res/pig.mp3">Pig</a>
 ```
 Resulting in this soundboard:
-![Soundboard](https://i.imgur.com/4Bweeni.png)
-
-Or with edited title-bar colour and random icon colours:
-![Soundboard2](https://i.imgur.com/KL87vK5.png)
+![Soundboard](https://i.imgur.com/TeVbQFR.png)
 
 ## Testing/Building/Publishing
 Please refer to the [ContactApp Wiki](https://github.com/incodehq/contactapp/wiki)
