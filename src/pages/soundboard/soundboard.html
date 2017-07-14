@@ -9,7 +9,10 @@
 <ion-list>
    <button ion-item detail-none *ngFor="let sound of sounds">
     <h2>{{ sound.title }}</h2>
-    <ion-icon name="play" item-start (click)="play(sound)"></ion-icon>
+
+    <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="play(sound)"></ion-icon>
+    <ion-icon *ngIf="sound.isPlaying" name="square" item-start (click)="stop(sound)"></ion-icon>
+
     <ion-icon name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
   </button>
 </ion-list>

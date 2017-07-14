@@ -51,7 +51,8 @@ export class SoundboardPage {
             }
             this.sounds.push({
               title: link.innerHTML,
-              file: filename
+              file: filename,
+              isPlaying: false
             });
           }
         },
@@ -73,18 +74,37 @@ export class SoundboardPage {
 
   /* Plays a sound, pausing other playing sounds if necessary */
   play(sound) {
-    console.log(sound)
+    console.log(sound);
     if(this.media) {
       this.media.pause();
     }
+
     this.media = new Audio(sound.file);
+    /* Adding event listeners to update the sounds isPlaying attribute accordingly */
+    this.media.onended = function() {
+      sound.isPlaying = false;
+    }
+    this.media.onpause = function() {
+      sound.isPlaying = false;
+    }
+    this.media.onplay = function() {
+      sound.isPlaying = true;
+    }
+
     this.media.load();
     this.media.play();
+    console.log(this.media);
+  }
+
+  stop(sound) {
+    if(sound.isPlaying) {
+      this.media.pause();
+    }
   }
 
   toggleFavourite(sound) {
     this.favouritesData.toggleFavourite(sound);
-    console.log(this.favouritesData.getAllFavourites())
+    console.log(this.favouritesData.getAllFavourites());
   }
 
 }
