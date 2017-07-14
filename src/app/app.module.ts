@@ -2,12 +2,14 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 
 import { SoundboardPage } from '../pages/soundboard/soundboard';
 
-import { StatusBar } from '@ionic-native/status-bar';
+import { FavouritesData } from '../providers/favouritesdata';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -25,8 +28,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     SoundboardPage
   ],
   providers: [
-    StatusBar,
+    FavouritesData,
     SplashScreen,
+    StatusBar,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

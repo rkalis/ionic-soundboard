@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
+import { FavouritesData } from '../../providers/favouritesdata';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class SoundboardPage {
   sounds: any = [];
   media: any = null;
 
-  constructor(public http: Http) {
+  constructor(public http: Http, public favouritesData: FavouritesData) {
     this.http.get(this.base_url + this.sounds_url)
       .subscribe(
         data => {
@@ -80,4 +81,10 @@ export class SoundboardPage {
     this.media.load();
     this.media.play();
   }
+
+  toggleFavourite(sound) {
+    this.favouritesData.toggleFavourite(sound);
+    console.log(this.favouritesData.getAllFavourites())
+  }
+
 }
