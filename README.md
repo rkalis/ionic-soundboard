@@ -37,7 +37,7 @@ The app is a simple soundboard, with a list of sounds, which can be played, and 
 ### Text
 Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` and edit the following variables:
 * base_url -> The website which hosts your sound files
-* sounds_url -> The location where your sounds are on your website
+* sounds_file -> The json file containing links to your sound files
 * title -> The title shown in the top bar of the app
 
 ### Icon & Splash Screen (Note: this Ionic feature is in Beta)
@@ -50,20 +50,47 @@ ionic cordova resources android
 
 ## Usage
 
-On the web address specified by base_url + sounds_url there should be a page containing link tags in the following format:
+There should be a file at  the path specified by base_url + sounds_file containing a json array with objects in the following format:
 ```
-<a href="sample_sound.mp3">Sample Title</a>
+{
+    "title": "Sample Title",
+    "file": "/sample_sound.mp3"
+}
 ```
 
-For example http://kalis.me/sounds looks like this:
+For example http://kalis.me/sounds.json looks like this:
 ```
-<a href="/res/bird.mp3">Bird</a>
-<a href="/res/cat.mp3">Cat</a>
-<a href="/res/cow.mp3">Cow</a>
-<a href="/res/dog.mp3">Dog</a>
-<a href="/res/dolphin.mp3">Dolphin</a>
-<a href="/res/frog.mp3">Frog</a>
-<a href="/res/pig.mp3">Pig</a>
+[
+    {
+        "title": "Bird",
+        "file": "/res/bird.mp3"
+    },
+    {
+        "title": "Cat",
+        "file": "/res/cat.mp3"
+    },
+    {
+        "title": "Cow",
+        "file": "/res/cow.mp3"
+    },
+    {
+        "title": "Dog",
+        "file": "/res/dog.mp3"
+    },
+    {
+        "title": "Dolphin",
+        "file": "/res/dolphin.mp3"
+    },
+    {
+        "title": "Frog",
+        "file": "/res/frog.mp3"
+    },
+    {
+        "title": "Pig",
+        "file": "/res/pig.mp3"
+    }
+]
+
 ```
 Resulting in this soundboard:
 ![Soundboard](https://i.imgur.com/TeVbQFR.png)
