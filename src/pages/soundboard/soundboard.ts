@@ -31,7 +31,7 @@ export class SoundboardPage {
            */
           for(let link of data.json()) {
             if(!link.file.startsWith("http")) {
-              if(link.file.startsWith("/")) {
+              if(!link.file.startsWith("/")) {
                 link.file = "/" + link.file;
               }
               link.file = this.base_url + link.file;
