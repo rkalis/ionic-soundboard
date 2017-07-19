@@ -20,9 +20,9 @@ export class FavouritesData {
     });
   }
 
-  clearStorage() {
-    this.storage.clear();
-    this._favourites = [];
+  clearFavourites() {
+    this.getAllFavourites()
+      .forEach(favourite => this.removeFavourite(favourite));
   }
 
   /* Checks if sound with name already exists in favourites */
