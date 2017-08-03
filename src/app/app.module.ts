@@ -7,7 +7,11 @@ import { MyApp } from './app.component';
 
 import { SoundboardPage } from '../pages/soundboard/soundboard';
 
+import { CacheService } from '../providers/cache.service';
 import { FavouritesData } from '../providers/favouritesdata';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+import { Media } from '@ionic-native/media';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
@@ -28,7 +32,11 @@ import { StatusBar } from '@ionic-native/status-bar';
     SoundboardPage
   ],
   providers: [
+    CacheService,
     FavouritesData,
+    File,
+    FileTransfer,
+    Media,
     SplashScreen,
     StatusBar,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
