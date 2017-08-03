@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { FavouritesData } from '../../providers/favouritesdata';
+import { CacheService } from '../../providers/cache.service';
+import { Media } from '@ionic-native/media';
 
 
 @Component({
@@ -16,7 +18,7 @@ export class SoundboardPage {
   sounds: any = [];
   media: any = null;
 
-  constructor(public http: Http, public favouritesData: FavouritesData) {
+  constructor(public http: Http, public favouritesData: FavouritesData, public cacheService: CacheService, public mediaService: Media) {
     this.http.get(this.base_url + this.sounds_file)
       .subscribe(
         data => {
@@ -29,9 +31,9 @@ export class SoundboardPage {
            *   }
            * ]
            */
-          for(let link of data.json()) {
-            if(!link.file.startsWith("http")) {
-              if(!link.file.startsWith("/")) {
+          for (let link of data.json()) {
+            if (!link.file.startsWith("http")) {
+              if (!link.file.startsWith("/")) {
                 link.file = "/" + link.file;
               }
               link.file = this.base_url + link.file;
@@ -51,19 +53,30 @@ export class SoundboardPage {
   /* Plays a sound, pausing other playing sounds if necessary */
   play(sound) {
     console.log(sound);
-    if(this.media) {
-      this.media.pause();
+
+    if (this.media) {
+      this.stop(sound);
     }
 
+    if (this.cacheService.hasInCache(sound)) {
+      this.playCachedSound(sound);
+    } else {
+      this.cacheService.addToCache(sound);
+      this.playRemoteSound(sound);
+    }
+  }
+
+  playRemoteSound(sound) {
     this.media = new Audio(sound.file);
+
     /* Adding event listeners to update the sounds isPlaying attribute accordingly */
-    this.media.onended = function() {
+    this.media.onended = () => {
       sound.isPlaying = false;
     }
-    this.media.onpause = function() {
+    this.media.onpause = () => {
       sound.isPlaying = false;
     }
-    this.media.onplay = function() {
+    this.media.onplay = () => {
       sound.isPlaying = true;
     }
 
@@ -71,10 +84,34 @@ export class SoundboardPage {
     this.media.play();
   }
 
+  playCachedSound(sound) {
+    let cachedSound = this.cacheService.getFromCache(sound);
+    console.log(cachedSound);
+    this.media = this.mediaService.create(cachedSound.file);
+    this.media.onStatusUpdate.subscribe(status => {
+      console.log(status);
+      if (status == 1) {
+        sound.isPlaying = true;
+      } else if (status == 3 || status == 4) {
+        sound.isPlaying = false;
+      }
+    });
+    console.log(this.media);
+    this.media.play();
+  }
+
   /* Stops the playback of the sound */
   stop(sound) {
-    if(sound.isPlaying) {
+    /* Stop playback, unsubscribe from Observables,
+     * release the audio, and set it to null
+     */
+    if (this.media) {
       this.media.pause();
+      if (this.media.release) {
+        // this.media.onStatusUpdate.unsubscribe();
+        this.media.release();
+      }
+      this.media = null;
     }
   }
 
