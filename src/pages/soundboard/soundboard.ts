@@ -19,7 +19,13 @@ export class SoundboardPage {
   media: any = null;
 
   constructor(public http: Http, public favouritesData: FavouritesData, public cacheService: CacheService, public mediaService: Media) {
-    this.http.get(this.base_url + this.sounds_file)
+    this.cacheService.ready().then(() => {
+      this.cacheService.getCache().forEach(cachedSound => {
+        cachedSound.isPlaying = false;
+        this.sounds.push(cachedSound);
+      });
+
+      this.http.get(this.base_url + this.sounds_file)
       .subscribe(
         data => {
           /* Loop through data
@@ -31,39 +37,64 @@ export class SoundboardPage {
            *   }
            * ]
            */
-          for (let link of data.json()) {
-            if (!link.file.startsWith("http")) {
-              if (!link.file.startsWith("/")) {
-                link.file = "/" + link.file;
+          data.json().forEach(sound => {
+            if (!sound.file.startsWith("http")) {
+              if (!sound.file.startsWith("/")) {
+                sound.file = "/" + sound.file;
               }
-              link.file = this.base_url + link.file;
+              sound.file = this.base_url + sound.file;
             }
-            this.sounds.push({
-              title: link.title,
-              file: link.file,
-              isPlaying: false
-            });
-          }
+            if (!this.cacheService.hasInCache(sound)) {
+              this.sounds.push({
+                title: sound.title,
+                src: sound.file,
+                isPlaying: false
+              })
+            }
+          });
         },
         err => console.error('There was an error: ' + err),
-        () => console.log('Get request completed')
+        () => console.log(this.sounds)
        );
+    });
   }
 
   /* Plays a sound, pausing other playing sounds if necessary */
   play(sound) {
     console.log(sound);
+    this.cacheService.addToCache(sound);
 
     if (this.media) {
       this.stop(sound);
     }
 
-    if (this.cacheService.hasInCache(sound)) {
-      this.playCachedSound(sound);
-    } else {
-      this.cacheService.addToCache(sound);
-      this.playRemoteSound(sound);
+    this.media = this.mediaService.create(sound.src);
+    this.media.statusCallback = status => {
+      console.log(status);
+      if (status == 1 || status == 2) {
+        sound.isPlaying = true;
+      } else if (status == 3 || status == 4) {
+        sound.isPlaying = false;
+      }
     }
+    this.media.play();
+    // this.media.onStatusUpdate.subscribe(status => {
+    //   console.log(status);
+    //   if (status == this.mediaService.create("test").statusCallback || status == 2) {
+    //     sound.isPlaying = true;
+    //   } else if (status == 3 || status == 4) {
+    //     sound.isPlaying = false;
+    //   }
+    // });
+    // console.log(this.media);
+    // this.media.play();
+
+    // if (this.cacheService.hasInCache(sound)) {
+    //   this.playCachedSound(sound);
+    // } else {
+    //   this.cacheService.addToCache(sound);
+    //   this.playRemoteSound(sound);
+    // }
   }
 
   playRemoteSound(sound) {
@@ -106,9 +137,9 @@ export class SoundboardPage {
      * release the audio, and set it to null
      */
     if (this.media) {
-      this.media.pause();
+      this.media.stop();
       if (this.media.release) {
-        // this.media.onStatusUpdate.unsubscribe();
+        this.media.statusCallback = null;
         this.media.release();
       }
       this.media = null;

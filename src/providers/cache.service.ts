@@ -8,23 +8,30 @@ import { File } from '@ionic-native/file';
 @Injectable()
 export class CacheService {
   _cache: any[] = [];
+  _ready: Promise<any>;
   fileTransfer: FileTransferObject;
 
   constructor(public events: Events, public storage: Storage, public transfer: FileTransfer, public file: File) {
-    /* When storage is ready, load cache into the app */
-    this.storage.ready().then(() => {
-      this.storage.forEach((value: any, key: string) => {
-        console.log(key, value);
-        if (key.startsWith('cache:')) {
-          this._cache.push(value);
-        }
-      })
-    });
+    this._ready = new Promise((resolve, reject) => {
+      this.fileTransfer = this.transfer.create();
 
-    this.fileTransfer = this.transfer.create();
+      /* When storage is ready, load cache into memory */
+      this.storage.ready().then(() => {
+        this.storage.forEach((value: any, key: string) => {
+          console.log(key, value);
+          if (key.startsWith('cache:')) {
+            this._cache.push(value);
+          }
+        }).then(() => resolve());
+      }).catch(error => reject(error));
+    });
   }
 
-  clearCache() {
+  ready(): Promise<any> {
+    return this._ready;
+  }
+
+  clearCache(): void {
     this.getCache()
       .forEach(sound => this.removeFromCache(sound));
   }
@@ -35,18 +42,22 @@ export class CacheService {
   };
 
   /* Adds new sound to cache and storage */
-  addToCache(sound: any) {
+  addToCache(sound: any): Promise<void> {
     if (this.hasInCache(sound)) {
       return;
     }
-    console.log(sound.file, this.file.cacheDirectory + sound.title);
-    return this.fileTransfer.download(sound.file, this.file.cacheDirectory + sound.title)
+    console.log(sound.src, this.file.cacheDirectory + sound.title);
+    return this.fileTransfer.download(sound.src, this.file.cacheDirectory + sound.title)
       .then(entry => {
-        sound.file = entry.toURL();
-        sound.cacheDate = new Date();
-        console.log(sound);
-        this.storage.set('cache:' + sound.title, sound);
-        this._cache.push(sound);
+        let cachedSound = {
+          title: sound.title,
+          src: entry.toURL(),
+          remoteSrc: sound.src,
+          cacheDate: new Date()
+        }
+        console.log(cachedSound);
+        this.storage.set('cache:' + cachedSound.title, cachedSound);
+        this._cache.push(cachedSound);
       })
       .catch(error => {
         console.log(error);
@@ -73,11 +84,11 @@ export class CacheService {
   }
 
   /* Returns entire cache */
-  getCache() {
+  getCache(): any[] {
     return this._cache;
   }
 
-  getFromCache(sound: any) {
+  getFromCache(sound: any): any {
     if (!this.hasInCache(sound)) {
       return null;
     }
