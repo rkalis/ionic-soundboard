@@ -1,28 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Events } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
+import { Platform } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 
 
 @Injectable()
 export class CacheService {
   _cache: any[] = [];
   _ready: Promise<any>;
+  maxCachedDays = 7;
   fileTransfer: FileTransferObject;
 
-  constructor(public events: Events, public storage: Storage, public transfer: FileTransfer, public file: File) {
+  constructor(private storage: Storage, private transfer: FileTransfer,
+              private file: File, private platform: Platform) {
+    /* When storage is ready, load cache into memory
+     * After loading the cache into the memory, this service is ready
+     */
     this._ready = new Promise((resolve, reject) => {
-      this.fileTransfer = this.transfer.create();
-
-      /* When storage is ready, load cache into memory */
-      this.storage.ready().then(() => {
-        this.storage.forEach((value: any, key: string) => {
-          console.log(key, value);
-          if (key.startsWith('cache:')) {
-            this._cache.push(value);
-          }
-        }).then(() => resolve());
+      this.platform.ready().then(() => {
+        this.fileTransfer = this.transfer.create();
+        this.storage.ready().then(() => {
+          this.storage.forEach((value: any, key: string) => {
+            if (key.startsWith('cache:')) {
+              this._cache.push(value);
+            }
+          }).then(() => resolve());
+        }).catch(error => reject(error));
       }).catch(error => reject(error));
     });
   }
@@ -31,56 +35,100 @@ export class CacheService {
     return this._ready;
   }
 
-  clearCache(): void {
-    this.getCache()
-      .forEach(sound => this.removeFromCache(sound));
+  clearCache(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      /* Loops through the entire cache and remove all entries by
+       * calling this.removeFromCache for each of them.
+       * This loop is back to front because there would be
+       * async issues when looping front to back
+       */
+      for (let i = this.getCache().length - 1; i >= 0; i--) {
+        const sound = this.getCache()[i];
+        this.removeFromCache(sound)
+          .then(() => {
+            /* Resolve when all sounds have been removed */
+            if (this.getCache().length === 0) {
+              resolve();
+            }
+          }).catch(error => reject(error));
+      }
+      /* Also resolve if cache already was empty */
+      resolve();
+    });
   }
 
-  /* Checks if sound with name already exists in cache */
+  /* Checks if sound with the same name already exists in cache */
   hasInCache(sound: any): boolean {
-    return this.findWithAttr(this.getCache(), 'title', sound.title) > -1;
-  };
+    return this.getCache().findIndex(cachedSound => cachedSound.title === sound.title) > -1;
+  }
 
-  /* Adds new sound to cache and storage */
-  addToCache(sound: any): Promise<void> {
-    if (this.hasInCache(sound)) {
-      return;
-    }
-    console.log(sound.src, this.file.cacheDirectory + sound.title);
-    return this.fileTransfer.download(sound.src, this.file.cacheDirectory + sound.title)
-      .then(entry => {
-        let cachedSound = {
-          title: sound.title,
-          src: entry.toURL(),
-          remoteSrc: sound.src,
-          cacheDate: new Date()
+  /* Downloads a file into the local data directory, adding the sound object
+   * to the cache storage as well.
+   */
+  addToCache(sound: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      /* Resolve with existing sound if it is already present and not outdated,
+       * set src property to the remote one if it is outdated, so it will get
+       * replaced
+       */
+      if (this.hasInCache(sound)) {
+        if (!this.isOutdated(sound)) {
+          resolve(this.getFromCache(sound));
         }
-        console.log(cachedSound);
-        this.storage.set('cache:' + cachedSound.title, cachedSound);
-        this._cache.push(cachedSound);
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  };
+        if (sound.remoteSrc) {
+          sound.src = sound.remoteSrc;
+        }
+      }
 
-  /* Removes sound from cache and storage */
-  removeFromCache(sound: any): void {
-    let index = this.findWithAttr(this.getCache(), 'title', sound.title);
-    if (index > -1) {
-      this._cache.splice(index, 1);
+      /* Download file at sound.src into the local data directory */
+      this.fileTransfer.download(sound.src, this.file.dataDirectory + sound.title)
+        .then(entry => {
+          /* Media plugin can't play sounds with 'file://' prefix on ios */
+          let src = entry.toURL();
+          if (this.platform.is('ios')) {
+            src = src.replace(/^file:\/\//, '');
+          }
+
+          const cachedSound = {
+            title: sound.title,
+            src: src,
+            remoteSrc: sound.src,
+            cacheDate: new Date()
+          };
+
+          this.storage.set('cache:' + cachedSound.title, cachedSound);
+          this._cache.push(cachedSound);
+
+          resolve(cachedSound);
+        }).catch(error => reject(error));
+    });
+  }
+
+  /* Removes sound from local data directory and cache storage */
+  removeFromCache(sound: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const index = this.getCache().findIndex(cachedSound => cachedSound.title === sound.title);
+      if (index === -1) {
+        reject('Not in cache');
+      }
+
+      /* Remove the sound from memory */
+      this.getCache().splice(index, 1);
+
+      /* Remove the sound from cache storage */
       this.storage.remove('cache:' + sound.title);
-      this.file.removeFile(this.file.cacheDirectory, sound.title);
-    }
-  };
 
-  /* Adds to cache if it didn't exist yet, removes it otherwise */
-  toggleInCache(sound: any): void {
-    if (this.hasInCache(sound)) {
-      this.removeFromCache(sound);
-    } else {
-      this.addToCache(sound);
-    }
+      /* Remove the sound from filesystem */
+      this.file.removeFile(this.file.dataDirectory, sound.title)
+        .then(() => resolve())
+        .catch(error => reject(error));
+    });
+  }
+
+  /* Checks if a cached sound needs to be refreshed */
+  isOutdated(sound: any): boolean {
+
+    return this.hasInCache(sound) && new Date().getDate() - this.maxCachedDays > this.getFromCache(sound).cacheDate.getDate();
   }
 
   /* Returns entire cache */
@@ -88,20 +136,11 @@ export class CacheService {
     return this._cache;
   }
 
+  /* Returns a cached sound from cache */
   getFromCache(sound: any): any {
     if (!this.hasInCache(sound)) {
       return null;
     }
-    return this.getCache()[this.findWithAttr(this.getCache(), 'title', sound.title)]
-  }
-
-  /* Helper function to find elements in an array for which attr == value */
-  findWithAttr(array, attr, value) {
-    for (var i = 0; i < array.length; i += 1) {
-        if (array[i][attr] === value) {
-            return i;
-        }
-    }
-    return -1;
+    return this.getCache()[this.getCache().findIndex(cachedSound => cachedSound.title === sound.title)];
   }
 }
