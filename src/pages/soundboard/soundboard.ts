@@ -84,7 +84,7 @@ export class SoundboardPage {
   }
 
   playWithWebAudio(sound) {
-    this.media = new Audio(sound.file);
+    this.media = new Audio(sound.src);
 
     /* Adding event listeners to update the sound's isPlaying attribute accordingly */
     this.media.onended = () => {
@@ -127,10 +127,13 @@ export class SoundboardPage {
   /* Stops the playback of the sound */
   stopPlayback() {
     if (this.media) {
-      this.media.stop();
       if (this.media.release) {
+        this.media.stop();
         this.media.release();
+      } else {
+        this.media.pause();
       }
+      this.media = null;
     }
   }
 
