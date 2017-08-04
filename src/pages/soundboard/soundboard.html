@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>{{ title }}</ion-title>
-    <!-- <button ion-button (click)="favouritesData.clearFavourites()">Clear</button> -->
+     <!-- <button ion-button (click)="clearCacheAndReload()">Clear</button> -->
   </ion-navbar>
 </ion-header>
 
@@ -12,7 +12,7 @@
     <h2>{{ sound.title }}</h2>
 
     <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="play(sound)"></ion-icon>
-    <ion-icon *ngIf="sound.isPlaying" name="square" item-start (click)="stop(sound)"></ion-icon>
+    <ion-icon *ngIf="sound.isPlaying" name="square" item-start (click)="stopPlayback()"></ion-icon>
 
     <ion-icon *ngIf="!favouritesData.hasFavourite(sound)" name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
     <ion-icon *ngIf="favouritesData.hasFavourite(sound)" name="star" item-end (click)="toggleFavourite(sound)"></ion-icon>
