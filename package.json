@@ -24,6 +24,8 @@
         "@ionic-native/status-bar": "3.12.1",
         "@ionic/storage": "2.0.1",
         "ajv": "^5.2.2",
+        "codelyzer": "^3.1.2",
+        "cordova-android": "^6.2.3",
         "cordova-browser": "^4.1.0",
         "cordova-plugin-compat": "^1.1.0",
         "cordova-plugin-console": "1.0.5",
@@ -80,6 +82,7 @@
             }
         },
         "platforms": [
+            "android",
             "browser"
         ]
     }
