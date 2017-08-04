@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
-import { FavouritesData } from '../../providers/favouritesdata';
-import { CacheService } from '../../providers/cache.service';
+import { CacheService } from '../../services/cache.service';
+import { FavouritesService } from '../../services/favourites.service';
 import { Media } from '@ionic-native/media';
 import { NgZone } from '@angular/core';
 
@@ -19,7 +19,7 @@ export class SoundboardPage {
   sounds: any = [];
   media: any = null;
 
-  constructor(private http: Http, public favouritesData: FavouritesData, private mediaService: Media,
+  constructor(private http: Http, public favouritesService: FavouritesService, private mediaService: Media,
               private cacheService: CacheService, private zone: NgZone) {
     this.cacheService.ready().then(() => {
       this.cacheService.getCache().forEach(cachedSound => {
@@ -106,6 +106,7 @@ export class SoundboardPage {
 
     /* Adding status callback to update the sound's isPlaying attribute accordingly */
     this.media.statusCallback = status => {
+      /* Run this in ngZone to propagate changes to the UI */
       this.zone.run(() => {
         switch (status) {
           case this.mediaService.MEDIA_RUNNING:
@@ -159,17 +160,17 @@ export class SoundboardPage {
 
   /* Toggle a sound as favourite */
   toggleFavourite(sound) {
-    this.favouritesData.toggleFavourite(sound);
+    this.favouritesService.toggleFavourite(sound);
   }
 
   /* Lists all favourited sounds */
   listFavouriteSounds() {
-    return this.sounds.filter(sound => this.favouritesData.hasFavourite(sound));
+    return this.sounds.filter(sound => this.favouritesService.hasFavourite(sound));
   }
 
   /* Lists all sounds not marked as favourite */
   listRegularSounds() {
-    return this.sounds.filter(sound => !this.favouritesData.hasFavourite(sound));
+    return this.sounds.filter(sound => !this.favouritesService.hasFavourite(sound));
   }
 
   /* List all sounds, favourites first */

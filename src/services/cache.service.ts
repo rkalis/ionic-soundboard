@@ -25,7 +25,7 @@ export class CacheService {
             if (key.startsWith('cache:')) {
               this._cache.push(value);
             }
-          }).then(() => resolve());
+          }).then(() => resolve()).catch(error => reject(error));
         }).catch(error => reject(error));
       }).catch(error => reject(error));
     });

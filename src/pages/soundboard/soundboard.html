@@ -14,8 +14,8 @@
     <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="play(sound)"></ion-icon>
     <ion-icon *ngIf="sound.isPlaying" name="square" item-start (click)="stopPlayback()"></ion-icon>
 
-    <ion-icon *ngIf="!favouritesData.hasFavourite(sound)" name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
-    <ion-icon *ngIf="favouritesData.hasFavourite(sound)" name="star" item-end (click)="toggleFavourite(sound)"></ion-icon>
+    <ion-icon *ngIf="!favouritesService.hasFavourite(sound)" name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
+    <ion-icon *ngIf="favouritesService.hasFavourite(sound)" name="star" item-end (click)="toggleFavourite(sound)"></ion-icon>
   </ion-item>
 </ion-list>
 

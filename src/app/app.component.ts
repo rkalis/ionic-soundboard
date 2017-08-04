@@ -9,7 +9,7 @@ import { SoundboardPage } from '../pages/soundboard/soundboard';
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage:any = SoundboardPage;
+  rootPage: any = SoundboardPage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {
