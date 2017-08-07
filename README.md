@@ -1,9 +1,8 @@
 # Ionic 3 Soundboard
 
-This app takes a collection of sounds from a custom URL.
-That way sounds can be added and removed at will,
-while still keeping the app code the same.
-The app makes use of [Ionic 3](https://ionicframework.com/) with [TypeScript](https://www.typescriptlang.org/).
+This app takes a collection of sounds from a custom URL. That way sounds can be added and removed at will, while still keeping the app code the same. The app makes use of [Ionic 3](https://ionicframework.com/) with [TypeScript](https://www.typescriptlang.org/).
+
+Note: Some of the Ionic Native features (such as caching) add quite a bit of complexity to the code. For a more simple version of the app without these native features you can check out [the 'simple' branch](https://github.com/rkalis/ionic-soundboard/tree/simple).
 
 ## Prerequisities
 Assumes that Homebrew is installed.
@@ -23,13 +22,16 @@ npm install
 ionic platform add ios
 ionic platform add android
 ```
-Then run it locally with
+Then run it locally with any of the following
 ```
 ionic serve --lab
+ionic cordova run ios
+ionic cordova run android
 ```
+The first one running it in the browser, while the others run on a device or emulator. Note that Ionic Native features (such as caching) are disabled in the browser.
 
 ## Features
-The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips.
+The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips. When running on a native platform (iOS, Android, etc.), every sound is cached for seven days when playing it. That way the sounds can still be accessed when there is no internet connection.
 
 <img src="https://i.imgur.com/cZjbwtG.png" width="240">
 
