@@ -56,8 +56,7 @@ export class SoundboardPage {
           /* If the file is not already in the cache or it is, but outdated,
            * only then does the remote sound get added to the list
            */
-          if (!this.cacheService.hasInCache(sound) ||
-              this.cacheService.isOutdated(sound)) {
+          if (!this.cacheService.hasInCache(sound)) {
             this.sounds.push({
               title: sound.title,
               src: sound.file,

@@ -12,7 +12,6 @@ export class FavouritesService {
     this._ready = new Promise((resolve, reject) => {
       this.storage.ready().then(() => {
         this.storage.forEach((value: any, key: string) => {
-          console.log(key, value);
           if (key.startsWith('favourites:')) {
             this._favourites.push(value);
           }

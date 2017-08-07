@@ -24,6 +24,11 @@ export class CacheService {
           this.storage.forEach((value: any, key: string) => {
             if (key.startsWith('cache:')) {
               this._cache.push(value);
+              /* If the sound is outdated, remove it */
+              if (this.isOutdated(value)) {
+                this.removeFromCache(value)
+                  .catch(error => reject(error));
+              }
             }
           }).then(() => resolve()).catch(error => reject(error));
         }).catch(error => reject(error));
@@ -127,7 +132,6 @@ export class CacheService {
 
   /* Checks if a cached sound needs to be refreshed */
   isOutdated(sound: any): boolean {
-
     return this.hasInCache(sound) && new Date().getDate() - this.maxCachedDays > this.getFromCache(sound).cacheDate.getDate();
   }
 
