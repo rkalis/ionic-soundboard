@@ -10,13 +10,17 @@ export class FavouritesService {
   constructor(private storage: Storage) {
     /* When storage is ready, load all favourites into the app */
     this._ready = new Promise((resolve, reject) => {
-      this.storage.ready().then(() => {
-        this.storage.forEach((value: any, key: string) => {
-          if (key.startsWith('favourites:')) {
-            this._favourites.push(value);
+      this.storage.ready()
+      .then(() => {
+        return this.storage.get('favourites')
+        .then(value => {
+          if (value) {
+            this._favourites = value;
           }
-        }).then(() => resolve()).catch(error => reject(error));
-      }).catch(error => reject(error));
+        });
+      })
+      .then(() => resolve())
+      .catch(error => reject(error));
     });
   }
 
@@ -31,30 +35,33 @@ export class FavouritesService {
 
   /* Checks if sound with name already exists in favourites */
   hasFavourite(sound: any): boolean {
-    return this.getAllFavourites().findIndex(favourite => favourite.title === sound.title) > -1;
+    return this.getAllFavourites().findIndex(favourite => favourite === sound.title) > -1;
   }
 
   /* Adds new sound to favourites and storage */
-  addFavourite(sound: any): void {
-    this.storage.set('favourites:' + sound.title, sound);
-    this._favourites.push(sound);
+  addFavourite(sound: any): Promise<any> {
+    this.getAllFavourites().push(sound.title);
+    return this.storage.set('favourites', this.getAllFavourites());
   }
 
   /* Removes sound from favourites and storage */
-  removeFavourite(sound: any): void {
-    const index = this.getAllFavourites().findIndex(favourite => favourite.title === sound.title);
-    if (index > -1) {
-      this._favourites.splice(index, 1);
-      this.storage.remove('favourites:' + sound.title);
-    }
+  removeFavourite(sound: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const index = this.getAllFavourites().findIndex(favourite => favourite === sound.title);
+      if (index < 0) {
+        reject(sound.title + ' not in favourites');
+      }
+      this.getAllFavourites().splice(index, 1);
+      return this.storage.set('favourites', this.getAllFavourites());
+    });
   }
 
   /* Adds favourite if it didn't exist yet, removes it otherwise */
-  toggleFavourite(sound: any): void {
+  toggleFavourite(sound: any): Promise<any> {
     if (this.hasFavourite(sound)) {
-      this.removeFavourite(sound);
+      return this.removeFavourite(sound);
     } else {
-      this.addFavourite(sound);
+      return this.addFavourite(sound);
     }
   }
 
