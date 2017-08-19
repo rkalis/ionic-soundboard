@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { CacheService } from '../../services/cache.service';
 import { FavouritesService } from '../../services/favourites.service';
+import { PreferencesService } from '../../services/preferences.service';
 import { Media } from '@ionic-native/media';
 import { NgZone } from '@angular/core';
 
@@ -11,28 +12,33 @@ import { NgZone } from '@angular/core';
 })
 export class SoundboardPage {
 
-  /* EDIT THESE */
   title = 'Ionic Soundboard';
-  base_url = 'http://kalis.me';
-  sounds_file = '/sounds.json';
 
   sounds: any = [];
   media: any = null;
 
   constructor(private http: Http, public favouritesService: FavouritesService, private mediaService: Media,
-              private cacheService: CacheService, private zone: NgZone) {
+              private cacheService: CacheService, private preferencesService: PreferencesService, private zone: NgZone) {
     this.cacheService.ready().then(() => {
       this.cacheService.getCache().forEach(cachedSound => {
         cachedSound.isPlaying = false;
         this.sounds.push(cachedSound);
       });
-      this.getRemoteSounds();
-    }).catch(error => console.log(error));
+      return this.getRemoteSounds();
+    })
+    .catch(error => console.log(error));
   }
 
   /* Gets all sounds found at this.base_url + this.sounds_file */
-  getRemoteSounds() {
-    this.http.get(this.base_url + this.sounds_file)
+  getRemoteSounds(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const baseUrl = this.preferencesService.get('baseUrl');
+      const soundsFile = this.preferencesService.get('soundsFile');
+      if (!baseUrl || !soundsFile) {
+        reject();
+      }
+
+      this.http.get(baseUrl + soundsFile)
       .subscribe(data => {
         /* Loop through data
           * Format:
@@ -50,7 +56,7 @@ export class SoundboardPage {
               sound.file = '/' + sound.file;
             }
             /* Example: (/)soundfile.mp3 -> http://website.com/soundfile.mp3 */
-            sound.file = this.base_url + sound.file;
+            sound.file = baseUrl + sound.file;
           }
 
           /* If the file is not already in the cache or it is, but outdated,
@@ -64,10 +70,12 @@ export class SoundboardPage {
             });
           }
         });
+        resolve();
       },
-      error => console.error(error),
+      error => reject(error),
       () => console.log(this.sounds)
       );
+    });
   }
 
   /* Plays a sound, pausing other playing sounds if necessary */
@@ -138,23 +146,30 @@ export class SoundboardPage {
   }
 
   /* Caches a given sound */
-  cache(sound) {
+  cache(sound): Promise<any> {
     /* Adds a sound to the cache, then updates its attributes to reflect its new status */
-    return this.cacheService.addToCache(sound)
+    return new Promise((resolve, reject) => {
+      if (!this.preferencesService.get('cachingEnabled')) {
+        resolve();
+      }
+
+      return this.cacheService.addToCache(sound)
       .then(cachedSound => {
         sound.src = cachedSound.src;
         sound.remoteSrc = cachedSound.remoteSrc;
         sound.cacheDate = cachedSound.cache;
       }).catch(error => console.log(error));
+    });
   }
 
   /* Clears the entire cache, and reloads all remote sounds */
-  clearCacheAndReload() {
-    this.cacheService.clearCache()
+  clearCacheAndReload(): Promise<any> {
+    return this.cacheService.clearCache()
       .then(() => {
         this.sounds = [];
-        this.getRemoteSounds();
-      }).catch(error => console.log(error));
+        return this.getRemoteSounds();
+      })
+      .catch(error => console.log(error));
   }
 
   /* Toggle a sound as favourite */

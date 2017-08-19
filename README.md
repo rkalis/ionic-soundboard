@@ -36,13 +36,23 @@ The app is a simple soundboard, with a list of sounds, which can be played, and 
 <img src="https://i.imgur.com/cZjbwtG.png" width="240">
 
 ## Customising
-### Text
-Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` and edit the following variables:
-* base_url -> The website which hosts your sound files
-* sounds_file -> The json file containing links to your sound files
-* title -> The title shown in the top bar of the app
+### Title & Default Preferences
+Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` to edit the `title` variable.
 
-### Icon & Splash Screen (Note: this Ionic feature is in Beta)
+Open `ionic-soundboard/src/services/preferences.service.ts` to edit the default preferences:
+```
+setDefaultsIfNotAlready(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    this.setIfNotAlready('baseUrl', 'http://kalis.me')
+    .then(() => this.setIfNotAlready('soundsFile', '/sounds.json'))
+    .then(() => this.setIfNotAlready('cachingEnabled', true))
+    .catch(error => reject(error));
+  });
+}
+```
+Edit the default values to point to your own base url and your own sounds file.
+
+### Icon & Splash Screen
 Replace `ionic-soundboard/resources/icon.png` and `ionic-soundboard/resources/splash.png` with your own files.
 Then run:
 ```
@@ -52,7 +62,7 @@ ionic cordova resources android
 
 ## Usage
 
-There should be a file at  the path specified by base_url + sounds_file containing a json array with objects in the following format:
+There should be a file at  the path specified by `preferenceService.get('baseUrl')` + `preferenceService.get('soundsFile')` containing a json array with objects in the following format:
 ```
 {
     "title": "Sample Title",
@@ -99,4 +109,4 @@ Resulting in this soundboard:
 
 ## Testing/Building/Publishing
 Please refer to the [ContactApp Wiki](https://github.com/incodehq/contactapp/wiki)
-for a comprehensive guide to testing, building, and publishing Ionic apps.
+for a comprehensive guide to testing, building, and publishing Ionic apps. Do note that the ContactApp was written in an older version of Ionic.

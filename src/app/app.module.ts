@@ -9,6 +9,7 @@ import { SoundboardPage } from '../pages/soundboard/soundboard';
 
 import { CacheService } from '../services/cache.service';
 import { FavouritesService } from '../services/favourites.service';
+import { PreferencesService } from '../services/preferences.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 import { Media } from '@ionic-native/media';
@@ -34,6 +35,7 @@ import { StatusBar } from '@ionic-native/status-bar';
   providers: [
     CacheService,
     FavouritesService,
+    PreferencesService,
     File,
     FileTransfer,
     Media,
