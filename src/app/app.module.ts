@@ -6,6 +6,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 
 import { SoundboardPage } from '../pages/soundboard/soundboard';
+import { PreferencesPage } from '../pages/preferences/preferences';
 
 import { CacheService } from '../services/cache.service';
 import { FavouritesService } from '../services/favourites.service';
@@ -19,6 +20,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 @NgModule({
   declarations: [
     MyApp,
+    PreferencesPage,
     SoundboardPage
   ],
   imports: [
@@ -30,6 +32,7 @@ import { StatusBar } from '@ionic-native/status-bar';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
+    PreferencesPage,
     SoundboardPage
   ],
   providers: [
