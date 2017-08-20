@@ -4,6 +4,15 @@ import { Storage } from '@ionic/storage';
 
 @Injectable()
 export class PreferencesService {
+
+  get DEFAULT_PREFERENCES() {
+    return {
+      baseUrl: 'http://kalis.me',
+      soundsFile: '/sounds.json',
+      cachingEnabled: true
+    };
+  }
+
   _preferences: object = {};
   _ready: Promise<any>;
 
@@ -12,16 +21,15 @@ export class PreferencesService {
     this._ready = new Promise((resolve, reject) => {
       this.storage.ready()
       .then(() => {
-        this.storage.forEach((value: any, key: string) => {
+        this._preferences = this.DEFAULT_PREFERENCES;
+        return this.storage.forEach((value: any, key: string) => {
           if (key.startsWith('preferences:')) {
             const newKey = key.replace('preferences:', '');
             this.getPreferences()[newKey] = value;
           }
-        })
-        .then(() => this.setDefaultsIfNotAlready())
-        .then(() => resolve())
-        .catch(error => reject(error));
+        });
       })
+      .then(() => resolve())
       .catch(error => reject(error));
     });
   }
@@ -30,25 +38,14 @@ export class PreferencesService {
     return this._ready;
   }
 
-  /* Edit defaults here */
-  setDefaultsIfNotAlready(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.setIfNotAlready('baseUrl', 'http://kalis.me')
-      .then(() => this.setIfNotAlready('soundsFile', '/sounds.json'))
-      .then(() => this.setIfNotAlready('cachingEnabled', true))
-      .catch(error => reject(error));
-    });
-  }
-
   resetToDefaults(): Promise<any> {
     return new Promise((resolve, reject) => {
       Object.keys(this.getPreferences()).forEach(key => {
         this.remove(key)
         .then(() => {
           if (Object.keys(this.getPreferences()).length === 0) {
-            return this.setDefaultsIfNotAlready()
-            .then(() => resolve())
-            .catch(error => reject(error));
+            this._preferences = this.DEFAULT_PREFERENCES;
+            return resolve();
           }
         })
         .catch(error => reject(error));
@@ -62,10 +59,10 @@ export class PreferencesService {
 
   set(key: string, value: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.storage.set('preferences:' + key, value)
+      return this.storage.set('preferences:' + key, value)
       .then(() => {
         this.getPreferences()[key] = value;
-        return resolve(key);
+        return resolve();
       })
       .catch(error => reject(error));
     });
@@ -76,7 +73,8 @@ export class PreferencesService {
       if (this.exists(key)) {
         return resolve();
       }
-      return this.set(key, value);
+      return this.set(key, value)
+      .catch(error => console.log(error));
     });
   }
 

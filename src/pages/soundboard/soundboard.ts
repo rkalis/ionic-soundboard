@@ -22,7 +22,11 @@ export class SoundboardPage {
   constructor(private http: Http, public favouritesService: FavouritesService, private mediaService: Media,
               private cacheService: CacheService, private preferencesService: PreferencesService,
               private modalCtrl: ModalController, private zone: NgZone) {
-    this.cacheService.ready().then(() => {
+    console.log('gonna load cache');
+    this.preferencesService.ready()
+    .then(() => this.cacheService.ready())
+    .then(() => {
+      console.log('cache ready');
       return this.load();
     })
     .catch(error => console.log(error));
@@ -46,6 +50,7 @@ export class SoundboardPage {
     return new Promise((resolve, reject) => {
       const baseUrl = this.preferencesService.get('baseUrl');
       const soundsFile = this.preferencesService.get('soundsFile');
+      console.log(baseUrl, soundsFile);
       if (!baseUrl || !soundsFile) {
         return reject('No base url or sounds file specified');
       }
