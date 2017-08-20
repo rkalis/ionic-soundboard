@@ -2,7 +2,12 @@
   <ion-navbar>
     <ion-title>{{ title }}</ion-title>
      <!-- <button ion-button (click)="clearCacheAndReload()">Clear</button> -->
-  </ion-navbar>
+     <ion-buttons end>
+        <button (click)="showPreferences()" ion-button icon-only>
+          <ion-icon name="more" color="dark"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
 <ion-content>

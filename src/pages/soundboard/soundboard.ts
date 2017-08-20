@@ -3,7 +3,9 @@ import { Http } from '@angular/http';
 import { CacheService } from '../../services/cache.service';
 import { FavouritesService } from '../../services/favourites.service';
 import { PreferencesService } from '../../services/preferences.service';
+import { PreferencesPage } from '../preferences/preferences';
 import { Media } from '@ionic-native/media';
+import { ModalController } from 'ionic-angular';
 import { NgZone } from '@angular/core';
 
 
@@ -18,15 +20,25 @@ export class SoundboardPage {
   media: any = null;
 
   constructor(private http: Http, public favouritesService: FavouritesService, private mediaService: Media,
-              private cacheService: CacheService, private preferencesService: PreferencesService, private zone: NgZone) {
+              private cacheService: CacheService, private preferencesService: PreferencesService,
+              private modalCtrl: ModalController, private zone: NgZone) {
     this.cacheService.ready().then(() => {
-      this.cacheService.getCache().forEach(cachedSound => {
-        cachedSound.isPlaying = false;
-        this.sounds.push(cachedSound);
-      });
-      return this.getRemoteSounds();
+      return this.load();
     })
     .catch(error => console.log(error));
+  }
+
+  load(): Promise<any> {
+    this.cacheService.getCache().forEach(cachedSound => {
+      cachedSound.isPlaying = false;
+      this.sounds.push(cachedSound);
+    });
+    return this.getRemoteSounds();
+  }
+
+  reload(): Promise<any> {
+    this.sounds = [];
+    return this.load();
   }
 
   /* Gets all sounds found at this.base_url + this.sounds_file */
@@ -166,8 +178,7 @@ export class SoundboardPage {
   clearCacheAndReload(): Promise<any> {
     return this.cacheService.clearCache()
       .then(() => {
-        this.sounds = [];
-        return this.getRemoteSounds();
+        return this.reload();
       })
       .catch(error => console.log(error));
   }
@@ -192,4 +203,16 @@ export class SoundboardPage {
     return this.listFavouriteSounds().concat(this.listRegularSounds());
   }
 
+  showPreferences() {
+    const preferencesModal = this.modalCtrl.create(PreferencesPage);
+    preferencesModal.onDidDismiss(data => {
+      if (!data) {
+        return;
+      }
+      if (data.reload) {
+        this.reload();
+      }
+    });
+    preferencesModal.present();
+  }
 }
