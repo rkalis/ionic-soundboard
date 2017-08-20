@@ -47,7 +47,7 @@ export class SoundboardPage {
       const baseUrl = this.preferencesService.get('baseUrl');
       const soundsFile = this.preferencesService.get('soundsFile');
       if (!baseUrl || !soundsFile) {
-        reject();
+        return reject('No base url or sounds file specified');
       }
 
       this.http.get(baseUrl + soundsFile)
@@ -82,7 +82,7 @@ export class SoundboardPage {
             });
           }
         });
-        resolve();
+        return resolve();
       },
       error => reject(error),
       () => console.log(this.sounds)
@@ -162,30 +162,31 @@ export class SoundboardPage {
     /* Adds a sound to the cache, then updates its attributes to reflect its new status */
     return new Promise((resolve, reject) => {
       if (!this.preferencesService.get('cachingEnabled')) {
-        resolve();
+        return resolve();
       }
 
       return this.cacheService.addToCache(sound)
       .then(cachedSound => {
         sound.src = cachedSound.src;
         sound.remoteSrc = cachedSound.remoteSrc;
-        sound.cacheDate = cachedSound.cache;
-      }).catch(error => console.log(error));
+        sound.cacheDate = cachedSound.cacheDate;
+        return resolve();
+      })
+      .catch(error => console.log(error));
     });
   }
 
   /* Clears the entire cache, and reloads all remote sounds */
   clearCacheAndReload(): Promise<any> {
     return this.cacheService.clearCache()
-      .then(() => {
-        return this.reload();
-      })
-      .catch(error => console.log(error));
+    .then(() => this.reload())
+    .catch(error => console.log(error));
   }
 
   /* Toggle a sound as favourite */
   toggleFavourite(sound) {
-    this.favouritesService.toggleFavourite(sound);
+    return this.favouritesService.toggleFavourite(sound)
+    .catch(error => console.log(error));
   }
 
   /* Lists all favourited sounds */

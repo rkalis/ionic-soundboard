@@ -10,7 +10,7 @@ export class FavouritesService {
   constructor(private storage: Storage) {
     /* When storage is ready, load all favourites into the app */
     this._ready = new Promise((resolve, reject) => {
-      this.storage.ready()
+      return this.storage.ready()
       .then(() => {
         return this.storage.get('favourites')
         .then(value => {
@@ -19,8 +19,6 @@ export class FavouritesService {
           }
         });
       })
-      .then(() => resolve())
-      .catch(error => reject(error));
     });
   }
 
@@ -29,8 +27,8 @@ export class FavouritesService {
   }
 
   clearFavourites() {
-    this.getAllFavourites()
-      .forEach(favourite => this.removeFavourite(favourite));
+    this._favourites = [];
+    this.storage.set('favourites', this.getAllFavourites());
   }
 
   /* Checks if sound with name already exists in favourites */
@@ -49,7 +47,7 @@ export class FavouritesService {
     return new Promise((resolve, reject) => {
       const index = this.getAllFavourites().findIndex(favourite => favourite === sound.title);
       if (index < 0) {
-        reject(sound.title + ' not in favourites');
+        return reject(sound.title + ' not in favourites');
       }
       this.getAllFavourites().splice(index, 1);
       return this.storage.set('favourites', this.getAllFavourites());

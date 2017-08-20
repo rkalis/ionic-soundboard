@@ -47,9 +47,7 @@ export class PreferencesService {
         .then(() => {
           if (Object.keys(this.getPreferences()).length === 0) {
             return this.setDefaultsIfNotAlready()
-            .then(() => {
-              resolve();
-            })
+            .then(() => resolve())
             .catch(error => reject(error));
           }
         })
@@ -67,7 +65,7 @@ export class PreferencesService {
       this.storage.set('preferences:' + key, value)
       .then(() => {
         this.getPreferences()[key] = value;
-        resolve(key);
+        return resolve(key);
       })
       .catch(error => reject(error));
     });
@@ -76,7 +74,7 @@ export class PreferencesService {
   setIfNotAlready(key: string, value: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.exists(key)) {
-        resolve();
+        return resolve();
       }
       return this.set(key, value);
     });
@@ -85,13 +83,13 @@ export class PreferencesService {
   remove(key: string): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.exists(key)) {
-        reject();
+        return reject(key + ' does not exist');
       }
+
+      this.getPreferences[key] = undefined;
+
       this.storage.remove('preferences:' + key)
-      .then(() => {
-        this.getPreferences[key] = undefined;
-        resolve();
-      })
+      .then(() => resolve())
       .catch(error => reject(error));
     });
   }

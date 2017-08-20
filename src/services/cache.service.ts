@@ -18,21 +18,24 @@ export class CacheService {
      * After loading the cache into the memory, this service is ready
      */
     this._ready = new Promise((resolve, reject) => {
-      this.platform.ready().then(() => {
+      this.platform.ready()
+      .then(() => {
         this.fileTransfer = this.transfer.create();
-        this.storage.ready().then(() => {
-          this.storage.forEach((value: any, key: string) => {
+        return this.storage.ready()
+        .then(() => {
+          return this.storage.forEach((value: any, key: string) => {
             if (key.startsWith('cache:')) {
-              this._cache.push(value);
+              this.getCache().push(value);
               /* If the sound is outdated, remove it */
               if (this.isOutdated(value)) {
                 this.removeFromCache(value)
-                  .catch(error => reject(error));
+                .catch(error => reject(error));
               }
             }
-          }).then(() => resolve()).catch(error => reject(error));
-        }).catch(error => reject(error));
-      }).catch(error => reject(error));
+          });
+        });
+      })
+      .catch(error => reject(error));
     });
   }
 
@@ -50,15 +53,16 @@ export class CacheService {
       for (let i = this.getCache().length - 1; i >= 0; i--) {
         const sound = this.getCache()[i];
         this.removeFromCache(sound)
-          .then(() => {
-            /* Resolve when all sounds have been removed */
-            if (this.getCache().length === 0) {
-              resolve();
-            }
-          }).catch(error => reject(error));
+        .then(() => {
+          /* Resolve when all sounds have been removed */
+          if (this.getCache().length === 0) {
+            return resolve();
+          }
+        })
+        .catch(error => reject(error));
       }
       /* Also resolve if cache already was empty */
-      resolve();
+      return resolve();
     });
   }
 
@@ -78,7 +82,7 @@ export class CacheService {
        */
       if (this.hasInCache(sound)) {
         if (!this.isOutdated(sound)) {
-          resolve(this.getFromCache(sound));
+          return resolve(this.getFromCache(sound));
         }
         if (sound.remoteSrc) {
           sound.src = sound.remoteSrc;
@@ -87,25 +91,27 @@ export class CacheService {
 
       /* Download file at sound.src into the local data directory */
       this.fileTransfer.download(sound.src, this.file.dataDirectory + sound.title)
-        .then(entry => {
-          /* Media plugin can't play sounds with 'file://' prefix on ios */
-          let src = entry.toURL();
-          if (this.platform.is('ios')) {
-            src = src.replace(/^file:\/\//, '');
-          }
+      .then(entry => {
+        /* Media plugin can't play sounds with 'file://' prefix on ios */
+        let src = entry.toURL();
+        if (this.platform.is('ios')) {
+          src = src.replace(/^file:\/\//, '');
+        }
 
-          const cachedSound = {
-            title: sound.title,
-            src: src,
-            remoteSrc: sound.src,
-            cacheDate: new Date()
-          };
+        const cachedSound = {
+          title: sound.title,
+          src: src,
+          remoteSrc: sound.src,
+          cacheDate: new Date()
+        };
 
-          this.storage.set('cache:' + cachedSound.title, cachedSound);
-          this._cache.push(cachedSound);
-
-          resolve(cachedSound);
-        }).catch(error => reject(error));
+        return this.storage.set('cache:' + cachedSound.title, cachedSound)
+        .then(() => {
+          this.getCache().push(cachedSound);
+          return resolve(cachedSound);
+        })
+      })
+      .catch(error => reject(error));
     });
   }
 
@@ -114,19 +120,18 @@ export class CacheService {
     return new Promise((resolve, reject) => {
       const index = this.getCache().findIndex(cachedSound => cachedSound.title === sound.title);
       if (index === -1) {
-        reject('Not in cache');
+        return reject('Not in cache');
       }
 
       /* Remove the sound from memory */
       this.getCache().splice(index, 1);
 
       /* Remove the sound from cache storage */
-      this.storage.remove('cache:' + sound.title);
+      this.storage.remove('cache:' + sound.title)
+      .catch(error => reject(error));
 
       /* Remove the sound from filesystem */
-      this.file.removeFile(this.file.dataDirectory, sound.title)
-        .then(() => resolve())
-        .catch(error => reject(error));
+      return this.file.removeFile(this.file.dataDirectory, sound.title);
     });
   }
 
