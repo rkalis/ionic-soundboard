@@ -35,6 +35,7 @@ export class CacheService {
           });
         });
       })
+      .then(() => resolve())
       .catch(error => reject(error));
     });
   }

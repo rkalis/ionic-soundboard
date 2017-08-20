@@ -62,7 +62,7 @@ export class PreferencesService {
       return this.storage.set('preferences:' + key, value)
       .then(() => {
         this.getPreferences()[key] = value;
-        return resolve();
+        return resolve(key);
       })
       .catch(error => reject(error));
     });
@@ -73,8 +73,7 @@ export class PreferencesService {
       if (this.exists(key)) {
         return resolve();
       }
-      return this.set(key, value)
-      .catch(error => console.log(error));
+      return this.set(key, value);
     });
   }
 

@@ -18,7 +18,7 @@ export class FavouritesService {
             this._favourites = value;
           }
         });
-      })
+      });
     });
   }
 
