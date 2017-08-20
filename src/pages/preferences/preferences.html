@@ -12,5 +12,17 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-list>
+    <ion-list-header>
+      Caching
+    </ion-list-header>
+    <ion-item>
+      <ion-toggle color="dark" [(ngModel)]="cachingEnabled"></ion-toggle>
+      <ion-label>
+        Enable Local Caching
+      </ion-label>
+      <ion-icon name="archive" item-start></ion-icon>
+    </ion-item>
+  </ion-list>
+  <button color="dark" (click)="cacheService.clearCache()" ion-button full outline> Clear Local Cache</button>
 </ion-content>

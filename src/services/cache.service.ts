@@ -109,7 +109,7 @@ export class CacheService {
         .then(() => {
           this.getCache().push(cachedSound);
           return resolve(cachedSound);
-        })
+        });
       })
       .catch(error => reject(error));
     });
