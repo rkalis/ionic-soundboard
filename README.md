@@ -19,8 +19,6 @@ Assumes that Git is installed along with the prerequisites.
 git clone git@github.com:rkalis/ionic-soundboard.git
 cd ionic-soundboard
 npm install
-ionic platform add ios
-ionic platform add android
 ```
 Then run it locally with any of the following
 ```
@@ -31,9 +29,10 @@ ionic cordova run android
 The first one running it in the browser, while the others run on a device or emulator. Note that Ionic Native features (such as caching) are disabled in the browser.
 
 ## Features
-The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips. When running on a native platform (iOS, Android, etc.), every sound is cached for seven days when playing it. That way the sounds can still be accessed when there is no internet connection.
+The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips. When running on a native platform (iOS, Android, etc.), every sound is cached for seven days when playing it. That way the sounds can still be accessed when there is no internet connection. Local caching can be enabled or disabled, and the cache can be cleared in the preferences menu.
 
-<img src="https://i.imgur.com/cZjbwtG.png" width="240">
+<img src="https://i.imgur.com/eU13ja2.png" width="240">
+<img src="https://i.imgur.com/0Toy2zi.png" width="240">
 
 ## Customising
 ### Title & Default Preferences
@@ -41,13 +40,12 @@ Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` to edit the `title` v
 
 Open `ionic-soundboard/src/services/preferences.service.ts` to edit the default preferences:
 ```
-setDefaultsIfNotAlready(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    this.setIfNotAlready('baseUrl', 'http://kalis.me')
-    .then(() => this.setIfNotAlready('soundsFile', '/sounds.json'))
-    .then(() => this.setIfNotAlready('cachingEnabled', true))
-    .catch(error => reject(error));
-  });
+get DEFAULT_PREFERENCES() {
+  return {
+    baseUrl: 'http://kalis.me',
+    soundsFile: '/sounds.json',
+    cachingEnabled: true
+  };
 }
 ```
 Edit the default values to point to your own base url and your own sounds file.
@@ -105,7 +103,7 @@ For example http://kalis.me/sounds.json looks like this:
 
 ```
 Resulting in this soundboard:
-![Soundboard](https://i.imgur.com/TeVbQFR.png)
+![Soundboard](https://i.imgur.com/utd8KZU.png)
 
 ## Testing/Building/Publishing
 Please refer to the [ContactApp Wiki](https://github.com/incodehq/contactapp/wiki)
