@@ -31,8 +31,7 @@ The first one running it in the browser, while the others run on a device or emu
 ## Features
 The app is a simple soundboard, with a list of sounds, which can be played, and stopped when they are playing. In the soundboard, you have the option to mark certain sounds as favourites, moving them to the top of the list. This way, you can have all your favourite sounds right there at your fingertips. When running on a native platform (iOS, Android, etc.), every sound is cached for seven days when playing it. That way the sounds can still be accessed when there is no internet connection. Local caching can be enabled or disabled, and the cache can be cleared in the preferences menu.
 
-<img src="https://i.imgur.com/eU13ja2.png" width="240">
-<img src="https://i.imgur.com/0Toy2zi.png" width="240">
+<img src="https://i.imgur.com/bMLQCSe.png" width="500">
 
 ## Customising
 ### Title & Default Preferences
