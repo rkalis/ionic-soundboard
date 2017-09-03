@@ -10,6 +10,7 @@ import { PreferencesPage } from '../pages/preferences/preferences';
 
 import { CacheService } from '../services/cache.service';
 import { FavouritesService } from '../services/favourites.service';
+import { MediaService } from '../services/media.service';
 import { PreferencesService } from '../services/preferences.service';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
@@ -38,6 +39,7 @@ import { StatusBar } from '@ionic-native/status-bar';
   providers: [
     CacheService,
     FavouritesService,
+    MediaService,
     PreferencesService,
     File,
     FileTransfer,

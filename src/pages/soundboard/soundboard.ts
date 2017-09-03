@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { CacheService } from '../../services/cache.service';
 import { FavouritesService } from '../../services/favourites.service';
+import { MediaService } from '../../services/media.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { PreferencesPage } from '../preferences/preferences';
 import { Media } from '@ionic-native/media';
@@ -17,11 +18,10 @@ export class SoundboardPage {
   title = 'Ionic Soundboard';
 
   sounds: any = [];
-  media: any = null;
 
-  constructor(private http: Http, public favouritesService: FavouritesService, private mediaService: Media,
+  constructor(private http: Http, public favouritesService: FavouritesService, public mediaService: MediaService,
               private cacheService: CacheService, private preferencesService: PreferencesService,
-              private modalCtrl: ModalController, private zone: NgZone) {
+              private modalCtrl: ModalController) {
     this.preferencesService.ready()
     .then(() => this.cacheService.ready())
     .then(() => {
@@ -93,77 +93,15 @@ export class SoundboardPage {
   }
 
   /* Plays a sound, pausing other playing sounds if necessary */
-  play(sound) {
-    this.stopPlayback();
-
-    /* Plays with Cordova Audio if available, falls back on Web Audio */
-    if (window.hasOwnProperty('cordova') && window.hasOwnProperty('Media')) {
-      this.cache(sound).then(() => this.playWithCordovaAudio(sound));
-    } else {
-      this.playWithWebAudio(sound);
-    }
-  }
-
-  playWithWebAudio(sound) {
-    this.media = new Audio(sound.src);
-
-    /* Adding event listeners to update the sound's isPlaying attribute accordingly */
-    this.media.onended = () => {
-      sound.isPlaying = false;
-    };
-    this.media.onpause = () => {
-      sound.isPlaying = false;
-    };
-    this.media.onplay = () => {
-      sound.isPlaying = true;
-    };
-
-    this.media.load();
-    this.media.play();
-  }
-
-  playWithCordovaAudio(sound) {
-    this.media = this.mediaService.create(sound.src);
-
-    /* Adding status callback to update the sound's isPlaying attribute accordingly */
-    this.media.statusCallback = status => {
-      /* Run this in ngZone to propagate changes to the UI */
-      this.zone.run(() => {
-        switch (status) {
-          case this.mediaService.MEDIA_RUNNING:
-            sound.isPlaying = true;
-            break;
-          case this.mediaService.MEDIA_PAUSED:
-            sound.isPlaying = false;
-            break;
-          case this.mediaService.MEDIA_STOPPED:
-            sound.isPlaying = false;
-            break;
-        }
-      });
-    };
-
-    this.media.play();
-  }
-
-  /* Stops the playback of the sound */
-  stopPlayback() {
-    if (this.media) {
-      if (this.media.release) {
-        this.media.stop();
-        this.media.release();
-      } else {
-        this.media.pause();
-      }
-      this.media = null;
-    }
+  cacheAndPlay(sound) {
+    this.cache(sound).then(() => this.mediaService.play(sound));
   }
 
   /* Caches a given sound */
   cache(sound): Promise<any> {
     /* Adds a sound to the cache, then updates its attributes to reflect its new status */
     return new Promise((resolve, reject) => {
-      if (!this.preferencesService.get('cachingEnabled')) {
+      if (!window.hasOwnProperty('cordova') || !this.preferencesService.get('cachingEnabled')) {
         return resolve();
       }
 
@@ -176,6 +114,11 @@ export class SoundboardPage {
       })
       .catch(error => console.log(error));
     });
+  }
+
+  /* Stops the playback of the sound */
+  stopPlayback() {
+    this.mediaService.stopPlayback();
   }
 
   /* Clears the entire cache, and reloads all remote sounds */

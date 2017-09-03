@@ -16,7 +16,7 @@
   <ion-item detail-none *ngFor="let sound of listSortedSounds()">
     <h2>{{ sound.title }}</h2>
 
-    <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="play(sound)"></ion-icon>
+    <ion-icon *ngIf="!sound.isPlaying" name="play" item-start (click)="cacheAndPlay(sound)"></ion-icon>
     <ion-icon *ngIf="sound.isPlaying" name="square" item-start (click)="stopPlayback()"></ion-icon>
 
     <ion-icon *ngIf="!favouritesService.hasFavourite(sound)" name="star-outline" item-end (click)="toggleFavourite(sound)"></ion-icon>
