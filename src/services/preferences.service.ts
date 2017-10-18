@@ -7,7 +7,7 @@ export class PreferencesService {
 
   get DEFAULT_PREFERENCES() {
     return {
-      baseUrl: 'http://kalis.me',
+      baseUrl: 'https://kalis.me',
       soundsFile: '/sounds.json',
       cachingEnabled: true
     };
