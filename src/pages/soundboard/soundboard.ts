@@ -79,7 +79,7 @@ export class SoundboardPage {
           if (!this.cacheService.hasInCache(sound)) {
             this.sounds.push({
               title: sound.title,
-              src: sound.file,
+              remoteSrc: sound.file,
               isPlaying: false
             });
           }
@@ -107,7 +107,7 @@ export class SoundboardPage {
 
       return this.cacheService.addToCache(sound)
       .then(cachedSound => {
-        sound.src = cachedSound.src;
+        sound.localSrc = cachedSound.localSrc;
         sound.remoteSrc = cachedSound.remoteSrc;
         sound.cacheDate = cachedSound.cacheDate;
         return resolve();

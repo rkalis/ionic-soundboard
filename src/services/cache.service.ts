@@ -85,29 +85,27 @@ export class CacheService {
         if (!this.isOutdated(sound)) {
           return resolve(this.getFromCache(sound));
         }
-        if (sound.remoteSrc) {
-          sound.src = sound.remoteSrc;
-        }
       }
 
       /* Download file at sound.src into the local data directory */
-      this.fileTransfer.download(sound.src, this.file.dataDirectory + sound.title)
+      this.fileTransfer.download(sound.remoteSrc, this.file.dataDirectory + sound.title)
       .then(entry => {
         /* Media plugin can't play sounds with 'file://' prefix on ios */
-        let src = entry.toURL();
+        let localSrc = entry.toURL();
         if (this.platform.is('ios')) {
-          src = src.replace(/^file:\/\//, '');
+          localSrc = localSrc.replace(/^file:\/\//, '');
         }
 
         const cachedSound = {
           title: sound.title,
-          src: src,
-          remoteSrc: sound.src,
+          localSrc: localSrc,
+          remoteSrc: sound.remoteSrc,
           cacheDate: new Date()
         };
 
         return this.storage.set('cache:' + cachedSound.title, cachedSound)
         .then(() => {
+          // TODO: This may cause duplicates when replacing outdated cahce entries
           this.getCache().push(cachedSound);
           return resolve(cachedSound);
         });

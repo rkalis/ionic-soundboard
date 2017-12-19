@@ -36,9 +36,9 @@ export class MediaService {
         this.playWithCordovaAudio(sound);
       } catch (error) {
         if (sound.remoteSrc) {
-          this.playWithWebAudio(sound, sound.remoteSrc);
-        } else {
           this.playWithWebAudio(sound);
+        } else {
+          this.playWithWebAudio(sound, false);
         }
       }
     } else {
@@ -46,8 +46,8 @@ export class MediaService {
     }
   }
 
-  playWithWebAudio(sound, alternativeSrc = null) {
-    const src = alternativeSrc || sound.src;
+  playWithWebAudio(sound, remote = true) {
+    const src = remote ? sound.remoteSrc : sound.localSrc;
     this.media = new Audio(src);
 
     /* Adding event listeners to update the sound's isPlaying attribute accordingly */
@@ -65,8 +65,9 @@ export class MediaService {
     this.media.play();
   }
 
-  playWithCordovaAudio(sound) {
-    this.media = this.cordovaMedia.create(sound.src);
+  playWithCordovaAudio(sound, remote = false) {
+    const src = remote ? sound.remoteSrc : sound.localSrc;
+    this.media = this.cordovaMedia.create(src);
 
     /* Adding status callback to update the sound's isPlaying attribute accordingly */
     this.media.statusCallback = status => {
