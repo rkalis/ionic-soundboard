@@ -108,13 +108,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "my",
+      "soundboard",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "my",
+      "soundboard",
       "kebab-case"
     ],
     "use-input-property-decorator": true,

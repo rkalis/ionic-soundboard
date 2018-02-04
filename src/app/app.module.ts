@@ -3,7 +3,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { MyApp } from './app.component';
+import { SoundboardApp } from './app.component';
 
 import { SoundboardPage } from '../pages/soundboard/soundboard';
 import { PreferencesPage } from '../pages/preferences/preferences';
@@ -20,19 +20,19 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 @NgModule({
   declarations: [
-    MyApp,
     PreferencesPage,
+    SoundboardApp,
     SoundboardPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(SoundboardApp),
     IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
+    SoundboardApp,
     PreferencesPage,
     SoundboardPage
   ],

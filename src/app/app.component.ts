@@ -8,7 +8,7 @@ import { SoundboardPage } from '../pages/soundboard/soundboard';
 @Component({
   templateUrl: 'app.html'
 })
-export class MyApp {
+export class SoundboardApp {
   rootPage: any = SoundboardPage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {

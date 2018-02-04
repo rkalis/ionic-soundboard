@@ -65,7 +65,7 @@ export class SoundboardPage {
           */
         data.json().forEach(sound => {
           /* Example: http://website.com/soundfile.mp3 */
-          if (!sound.file.startsWith('http')) {
+          if (!(sound.file.startsWith('http') || sound.file.startsWith('//'))) {
             if (!sound.file.startsWith('/')) {
               sound.file = '/' + sound.file;
             }
