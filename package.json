@@ -4,8 +4,8 @@
   "description": "ionic-soundboard",
   "author": "Rosco Kalis <roscokalis@gmail.com> (https://kalis.me)",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/rkalis/ionic-soundboard"
+    "type": "git",
+    "url": "https://github.com/rkalis/ionic-soundboard"
   },
   "license": "MIT",
   "scripts": {
@@ -30,7 +30,7 @@
     "@ionic-native/splash-screen": "^4.5.0",
     "@ionic-native/status-bar": "^4.5.0",
     "@ionic/storage": "^2.1.0",
-    "cordova-ios": "4.5.4",
+    "cordova-ios": "^4.5.5",
     "cordova-plugin-device": "^1.1.0",
     "cordova-plugin-file": "^5.0.0",
     "cordova-plugin-file-transfer": "^1.7.0",
