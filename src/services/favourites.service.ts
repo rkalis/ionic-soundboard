@@ -7,7 +7,9 @@ export class FavouritesService {
   _favourites: any[] = [];
   _ready: Promise<any>;
 
-  constructor(private storage: Storage) {
+  constructor(
+    private storage: Storage
+  ) {
     /* When storage is ready, load all favourites into the app */
     this._ready = new Promise((resolve, reject) => {
       return this.storage.ready()

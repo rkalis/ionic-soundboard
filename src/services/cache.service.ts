@@ -12,8 +12,12 @@ export class CacheService {
   maxCachedDays = 7;
   fileTransfer: FileTransferObject;
 
-  constructor(private storage: Storage, private transfer: FileTransfer,
-              private file: File, private platform: Platform) {
+  constructor(
+    private storage: Storage,
+    private transfer: FileTransfer,
+    private file: File,
+    private platform: Platform
+  ) {
     /* When storage is ready, load cache into memory
      * After loading the cache into the memory, this service is ready
      */

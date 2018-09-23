@@ -38,7 +38,7 @@ The app is a simple soundboard, with a list of sounds, which can be played, and 
 Open `ionic-soundboard/src/pages/soundboard/soundboard.ts` to edit the `title` variable.
 
 Open `ionic-soundboard/src/services/preferences.service.ts` to edit the default preferences:
-```
+```javascript
 get DEFAULT_PREFERENCES() {
   return {
     baseUrl: 'http://kalis.me',
@@ -60,15 +60,15 @@ ionic cordova resources android
 ## Usage
 
 There should be a file at  the path specified by `preferenceService.get('baseUrl')` + `preferenceService.get('soundsFile')` containing a json array with objects in the following format:
-```
+```javascript
 {
     "title": "Sample Title",
     "file": "/sample_sound.mp3"
 }
 ```
 
-For example http://kalis.me/sounds.json looks like this:
-```
+For example http://misc.kalis.me/sounds.json looks like this:
+```javascript
 [
     {
         "title": "Bird",

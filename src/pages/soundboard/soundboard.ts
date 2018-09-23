@@ -19,9 +19,14 @@ export class SoundboardPage {
 
   sounds: any = [];
 
-  constructor(private http: Http, public favouritesService: FavouritesService, public mediaService: MediaService,
-              private cacheService: CacheService, private preferencesService: PreferencesService,
-              private modalCtrl: ModalController) {
+  constructor(
+    private http: Http,
+    public favouritesService: FavouritesService,
+    public mediaService: MediaService,
+    private cacheService: CacheService,
+    private preferencesService: PreferencesService,
+    private modalCtrl: ModalController
+  ) {
     this.preferencesService.ready()
     .then(() => this.cacheService.ready())
     .then(() => {

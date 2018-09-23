@@ -7,7 +7,7 @@ export class PreferencesService {
 
   get DEFAULT_PREFERENCES() {
     return {
-      baseUrl: 'https://kalis.me',
+      baseUrl: 'https://misc.kalis.me',
       soundsFile: '/sounds.json',
       cachingEnabled: true
     };
@@ -16,7 +16,9 @@ export class PreferencesService {
   _preferences: object = {};
   _ready: Promise<any>;
 
-  constructor(private storage: Storage) {
+  constructor(
+    private storage: Storage
+  ) {
     /* When storage is ready, load all favourites into the app */
     this._ready = new Promise((resolve, reject) => {
       this.storage.ready()
